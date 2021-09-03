@@ -1,18 +1,41 @@
-const Discord = require('discord.js')
-const client = new Discord.Client()
-const config = require('./config.json')
+const Discord = require("discord.js");
+const client = new Discord.Client();
+const config = require("./config.json");
 
-const privateMessage= require('./pvt-dm') 
+const command = require("./commands");
 
-client.on('ready',()=>{
-    console.log('BOT READY')
+client.on("ready", () => {
+  console.log("BOT READY");
 
-    privateMessage(client,'ping','pong')
+  command(client, "createtextchannel", (message) => {
+    const name = message.content.replace("!createtextchannel ", "");
+    const categoryid = message.channel.parentID;
+    if (name !== "") {
+      message.guild.channels
+        .create(name, {
+          type: "text"
+        })
+        .then((channel) => {
+          channel.setParent(categoryid);
+        });
+    }
+  });
 
-    client.users.fetch('452065156848025631').then(user=>{
-        user.send('oombu')
-    })
+  command(client, "createvoicechannel", (message) => {
+    const name = message.content.replace("!createvoicechannel ", "");
+    const categoryid = message.channel.parentID;
 
-})
+    if (name !== "") {
+      message.guild.channels
+        .create(name, {
+          type: "voice" 
+        })
+        .then((channel) => {
+            channel.setParent(categoryid);
+            channel.setUserLimit(40);
+        });
+    }
+  });
+});
 
-client.login(config.token)
+client.login(config.token);
