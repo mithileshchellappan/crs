@@ -6,12 +6,13 @@ var client = new Discord.Client();
 
 var config = require('./config.json');
 
-var firstMessage = require('./first-message');
-
-var firstMess = require('./first-message');
+var privateMessage = require('./pvt-dm');
 
 client.on('ready', function () {
   console.log('BOT READY');
-  firstMessage(client, '883399848026599464', 'helloworld!!', ['🔥', '💔', '🍕']);
+  privateMessage(client, 'ping', 'pong');
+  client.users.fetch('452065156848025631').then(function (user) {
+    user.send('oombu');
+  });
 });
 client.login(config.token);
