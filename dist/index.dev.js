@@ -1,43 +1,17 @@
 "use strict";
 
-var Discord = require("discord.js");
+var Discord = require('discord.js');
 
 var client = new Discord.Client();
 
-var config = require("./config.json");
+var config = require('./config.json');
 
-var command = require("./commands");
+var firstMessage = require('./first-message');
 
-client.on("ready", function () {
-  console.log("BOT READY");
-  command(client, ["ping", "test"], function (message) {
-    message.channel.send("pong");
-  });
-  command(client, "servers", function (message) {
-    client.guilds.cache.forEach(function (guild) {
-      message.channel.send("".concat(guild.name, " has a total of ").concat(guild.memberCount, " mem"));
-    });
-  });
-  command(client, ['cc', 'clearchannel'], function (message) {
-    if (message.member.hasPermission('ADMINISTRATOR')) {
-      message.channel.messages.fetch().then(function (results) {
-        message.channel.bulkDelete(results);
-      });
-    }
-  });
-  command(client, 'status', function (message) {
-    var content = message.content.replace('!status', '');
+var firstMess = require('./first-message');
 
-    if (content !== '') {
-      client.user.setPresence({
-        activity: {
-          name: content,
-          type: 0
-        }
-      });
-    } else {
-      message.channel.send('Type something');
-    }
-  });
+client.on('ready', function () {
+  console.log('BOT READY');
+  firstMessage(client, '883399848026599464', 'helloworld!!', ['🔥', '💔', '🍕']);
 });
 client.login(config.token);
