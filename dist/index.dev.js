@@ -10,30 +10,25 @@ var command = require("./commands");
 
 client.on("ready", function () {
   console.log("BOT READY");
-  command(client, "createtextchannel", function (message) {
-    var name = message.content.replace("!createtextchannel ", "");
-    var categoryid = message.channel.parentID;
-
-    if (name !== "") {
-      message.guild.channels.create(name, {
-        type: "text"
-      }).then(function (channel) {
-        channel.setParent(categoryid);
-      });
-    }
-  });
-  command(client, "createvoicechannel", function (message) {
-    var name = message.content.replace("!createvoicechannel ", "");
-    var categoryid = message.channel.parentID;
-
-    if (name !== "") {
-      message.guild.channels.create(name, {
-        type: "voice"
-      }).then(function (channel) {
-        channel.setParent(categoryid);
-        channel.setUserLimit(40);
-      });
-    }
+  command(client, 'embed', function (message) {
+    var logo = 'https://www.facebook.com/images/fb_icon_325x325.png';
+    var embed = new Discord.MessageEmbed().setTitle('Example').setURL('https://www.google.com').setAuthor(message.author.username).setImage(logo).setThumbnail(logo).setFooter('a footer', logo).setColor('#00aaFF').addFields({
+      name: 'field uno',
+      value: 'uno',
+      inline: true
+    }, {
+      name: 'field dos',
+      value: 'uno',
+      inline: true
+    }, {
+      name: 'field tres',
+      value: 'uno',
+      inline: true
+    }, {
+      name: 'field quadro',
+      value: 'quadro'
+    });
+    message.channel.send(embed);
   });
 });
 client.login(config.token);

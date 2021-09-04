@@ -7,35 +7,41 @@ const command = require("./commands");
 client.on("ready", () => {
   console.log("BOT READY");
 
-  command(client, "createtextchannel", (message) => {
-    const name = message.content.replace("!createtextchannel ", "");
-    const categoryid = message.channel.parentID;
-    if (name !== "") {
-      message.guild.channels
-        .create(name, {
-          type: "text"
-        })
-        .then((channel) => {
-          channel.setParent(categoryid);
-        });
-    }
-  });
+  command(client,'embed',(message)=>{
 
-  command(client, "createvoicechannel", (message) => {
-    const name = message.content.replace("!createvoicechannel ", "");
-    const categoryid = message.channel.parentID;
-
-    if (name !== "") {
-      message.guild.channels
-        .create(name, {
-          type: "voice" 
-        })
-        .then((channel) => {
-            channel.setParent(categoryid);
-            channel.setUserLimit(40);
-        });
+    const logo = 'https://www.facebook.com/images/fb_icon_325x325.png'
+    const embed = new Discord.MessageEmbed()
+    .setTitle('Example')
+    .setURL('https://www.google.com')
+    .setAuthor(message.author.username)
+    .setImage(logo)
+    .setThumbnail(logo)
+    .setFooter('a footer',logo)
+    .setColor('#00aaFF')
+    .addFields({
+      name:'field uno',
+      value:'uno',
+      inline:true
+    },
+    {
+      name:'field dos',
+      value:'uno',
+      inline:true
+    },
+    {
+      name:'field tres',
+      value:'uno',
+      inline:true
+    },
+    {
+      name:'field quadro',
+      value:'quadro',
     }
-  });
+    )
+
+    message.channel.send(embed)
+  })
+
 });
 
 client.login(config.token);
