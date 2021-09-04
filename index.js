@@ -7,35 +7,19 @@ const command = require("./commands");
 client.on("ready", () => {
   console.log("BOT READY");
 
-  command(client,'serverinfo',message=>{
-    const {guild} = message
-    // console.log(guild)
-    const {name,region,memberCount,owner,afkTimeout} = guild
-    const icon = guild.iconURL()
-    
-    // console.log(name,region,memberCount,icon,owner.user.tag,afkTimeout )
+  command(client, "help", (message) => {
+    message.channel.send(`**!help** - Displays help menu
+  **!add** <num1> <num2> - Adds 2 numbers
+  **!sub** <num1> <num2> -Subs 2 numbers
+    `);
+  });
 
-    const embed = new Discord.MessageEmbed()
-    .setTitle(`Server info for **${name}**`)
-    .setThumbnail(icon)
-    .addFields({
-      name:'Region',
-      value:region
-    },{
-      name:'Members',
-      value:memberCount
-    },{
-      name:'Owner',
-      value:owner.user.tag
-    },
-    {
-      name:'AFK Timeout',
-      value:afkTimeout/60
-    },
-    )
-
-    message.channel.send(embed)
-  })
+const {prefix} = config
+client.user.setPresence({
+  activity:{
+    name:`Use ${prefix} help`
+  }
+})
 
 });
 

@@ -10,30 +10,14 @@ var command = require("./commands");
 
 client.on("ready", function () {
   console.log("BOT READY");
-  command(client, 'serverinfo', function (message) {
-    var guild = message.guild; // console.log(guild)
-
-    var name = guild.name,
-        region = guild.region,
-        memberCount = guild.memberCount,
-        owner = guild.owner,
-        afkTimeout = guild.afkTimeout;
-    var icon = guild.iconURL(); // console.log(name,region,memberCount,icon,owner.user.tag,afkTimeout )
-
-    var embed = new Discord.MessageEmbed().setTitle("Server info for **".concat(name, "**")).setThumbnail(icon).addFields({
-      name: 'Region',
-      value: region
-    }, {
-      name: 'Members',
-      value: memberCount
-    }, {
-      name: 'Owner',
-      value: owner.user.tag
-    }, {
-      name: 'AFK Timeout',
-      value: afkTimeout / 60
-    });
-    message.channel.send(embed);
+  command(client, "help", function (message) {
+    message.channel.send("**!help** - Displays help menu\n  **!add** <num1> <num2> - Adds 2 numbers\n  **!sub** <num1> <num2> -Subs 2 numbers\n    ");
+  });
+  var prefix = config.prefix;
+  client.user.setPresence({
+    activity: {
+      name: "Use ".concat(prefix, " help")
+    }
   });
 });
 client.login(config.token);
