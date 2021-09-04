@@ -7,36 +7,31 @@ const command = require("./commands");
 client.on("ready", () => {
   console.log("BOT READY");
 
-  command(client,'embed',(message)=>{
+  command(client,'serverinfo',message=>{
+    const {guild} = message
+    // console.log(guild)
+    const {name,region,memberCount,owner,afkTimeout} = guild
+    const icon = guild.iconURL()
+    
+    // console.log(name,region,memberCount,icon,owner.user.tag,afkTimeout )
 
-    const logo = 'https://www.facebook.com/images/fb_icon_325x325.png'
     const embed = new Discord.MessageEmbed()
-    .setTitle('Example')
-    .setURL('https://www.google.com')
-    .setAuthor(message.author.username)
-    .setImage(logo)
-    .setThumbnail(logo)
-    .setFooter('a footer',logo)
-    .setColor('#00aaFF')
+    .setTitle(`Server info for **${name}**`)
+    .setThumbnail(icon)
     .addFields({
-      name:'field uno',
-      value:'uno',
-      inline:true
+      name:'Region',
+      value:region
+    },{
+      name:'Members',
+      value:memberCount
+    },{
+      name:'Owner',
+      value:owner.user.tag
     },
     {
-      name:'field dos',
-      value:'uno',
-      inline:true
+      name:'AFK Timeout',
+      value:afkTimeout/60
     },
-    {
-      name:'field tres',
-      value:'uno',
-      inline:true
-    },
-    {
-      name:'field quadro',
-      value:'quadro',
-    }
     )
 
     message.channel.send(embed)

@@ -10,23 +10,28 @@ var command = require("./commands");
 
 client.on("ready", function () {
   console.log("BOT READY");
-  command(client, 'embed', function (message) {
-    var logo = 'https://www.facebook.com/images/fb_icon_325x325.png';
-    var embed = new Discord.MessageEmbed().setTitle('Example').setURL('https://www.google.com').setAuthor(message.author.username).setImage(logo).setThumbnail(logo).setFooter('a footer', logo).setColor('#00aaFF').addFields({
-      name: 'field uno',
-      value: 'uno',
-      inline: true
+  command(client, 'serverinfo', function (message) {
+    var guild = message.guild; // console.log(guild)
+
+    var name = guild.name,
+        region = guild.region,
+        memberCount = guild.memberCount,
+        owner = guild.owner,
+        afkTimeout = guild.afkTimeout;
+    var icon = guild.iconURL(); // console.log(name,region,memberCount,icon,owner.user.tag,afkTimeout )
+
+    var embed = new Discord.MessageEmbed().setTitle("Server info for **".concat(name, "**")).setThumbnail(icon).addFields({
+      name: 'Region',
+      value: region
     }, {
-      name: 'field dos',
-      value: 'uno',
-      inline: true
+      name: 'Members',
+      value: memberCount
     }, {
-      name: 'field tres',
-      value: 'uno',
-      inline: true
+      name: 'Owner',
+      value: owner.user.tag
     }, {
-      name: 'field quadro',
-      value: 'quadro'
+      name: 'AFK Timeout',
+      value: afkTimeout / 60
     });
     message.channel.send(embed);
   });
