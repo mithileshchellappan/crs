@@ -8,10 +8,10 @@ var config = require("./config.json");
 
 var command = require("./commands");
 
-var welcome = require('./welcome');
+var memberCount = require('./mem-count');
 
 client.on("ready", function () {
   console.log("BOT READY");
-  welcome(client);
+  memberCount(client);
 });
 client.login(config.token);

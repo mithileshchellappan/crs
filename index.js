@@ -3,11 +3,10 @@ const client = new Discord.Client();
 const config = require("./config.json");
 const command = require("./commands");
 
-const welcome = require('./welcome')
-
+const memberCount = require('./mem-count')
 client.on("ready", () => {
   console.log("BOT READY");
-  welcome(client)
+  memberCount(client)
 });
 
 client.login(config.token);
