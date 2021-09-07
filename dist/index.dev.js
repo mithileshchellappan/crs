@@ -8,10 +8,10 @@ var config = require("./config.json");
 
 var command = require("./commands");
 
-var poll = require("./poll");
+var welcome = require('./welcome');
 
 client.on("ready", function () {
   console.log("BOT READY");
-  poll(client);
+  welcome(client);
 });
 client.login(config.token);

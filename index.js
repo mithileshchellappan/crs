@@ -3,15 +3,11 @@ const client = new Discord.Client();
 const config = require("./config.json");
 const command = require("./commands");
 
-const poll = require("./poll")
+const welcome = require('./welcome')
 
 client.on("ready", () => {
   console.log("BOT READY");
-
-  poll(client);
-
-
-
+  welcome(client)
 });
 
 client.login(config.token);
