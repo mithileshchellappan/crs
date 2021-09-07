@@ -4,7 +4,11 @@ module.exports = (client) => {
   client.on("guildMemberAdd", (member) => {
     console.log(member);
 
-    const message = `Hola amigo <@${member.id}> , welcome to the server! Go to ${member.guild.channels.cache.get(targetChannelId).toString()} for fun`;
+    const message = `Hola amigo <@${
+      member.id
+    }> , welcome to the server! Go to ${member.guild.channels.cache
+      .get(targetChannelId)
+      .toString()} for fun`;
 
     const channel = member.guild.channels.cache.get(channelId);
     channel.send(message);
