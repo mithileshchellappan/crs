@@ -1,5 +1,5 @@
 {
     "token": "ODgzMzg5MzgyNzEzODI3Mzc4.YTJOeQ.UljuOqbKzUKObKJtaMfon19MeIw",
     "prefix": "!",
-    "mongoPath":"mongodb://localhost:27017"
+    "mongoPath":"mongodb://localhost:27017/crs"
 }

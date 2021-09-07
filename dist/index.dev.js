@@ -6,11 +6,7 @@ var client = new Discord.Client();
 
 var config = require("./config.json");
 
-var command = require("./commands");
-
-var mongo = require('./mongo');
-
-var sendMessage = require('./send-message');
+var welcome = require('./welcome2');
 
 client.on("ready", function _callee() {
   return regeneratorRuntime.async(function _callee$(_context) {
@@ -18,16 +14,9 @@ client.on("ready", function _callee() {
       switch (_context.prev = _context.next) {
         case 0:
           console.log("BOT READY");
-          _context.next = 3;
-          return regeneratorRuntime.awrap(mongo().then(function (mongoose) {
-            try {
-              console.log('mongodb connected');
-            } finally {
-              mongoose.connection.close();
-            }
-          }));
+          welcome(client);
 
-        case 3:
+        case 2:
         case "end":
           return _context.stop();
       }
