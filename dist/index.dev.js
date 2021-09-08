@@ -6,7 +6,7 @@ var client = new Discord.Client();
 
 var config = require("./config.json");
 
-var welcome = require('./welcome2');
+var messageCount = require('./messageCounter');
 
 client.on("ready", function _callee() {
   return regeneratorRuntime.async(function _callee$(_context) {
@@ -14,7 +14,7 @@ client.on("ready", function _callee() {
       switch (_context.prev = _context.next) {
         case 0:
           console.log("BOT READY");
-          welcome(client);
+          messageCount(client);
 
         case 2:
         case "end":
