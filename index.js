@@ -2,11 +2,10 @@ const Discord = require("discord.js");
 const client = new Discord.Client();
 
 const config = require("./config.json");
-const mute = require('./mute')
-
+const eval = require('./eval')
 client.on("ready", async () => {
   console.log("BOT READY");
-  mute(client)
+  eval(client)
 });
 
 client.login(config.token);
