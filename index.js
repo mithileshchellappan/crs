@@ -4,10 +4,9 @@ const Discord = require("discord.js");
 const client = new Discord.Client();
 
 const config = require("./config.json");
-
+const antiAd = require('./ad-fight')
 client.on("ready", async () => {
   console.log("BOT READY!");
-
   const baseFile = "commandBase.js";
   const commandBase = require(`./commands/${baseFile}`);
 
