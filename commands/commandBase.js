@@ -42,16 +42,14 @@ const validatePermissions = (permissions) => {
   }
 };
 
-module.exports = (client, commandOptions) => {
+const allCommands = {
+
+}
+
+module.exports = (commandOptions) => {
   let {
     commands,
-    expectedArgs = "",
-    permissionError = "You do not have permission to run this command",
-    minArgs = 0,
-    maxArgs = null,
     permissions = [],
-    requiredRoles = [],
-    callback
   } = commandOptions;
 
   if (typeof commands === "string") {
@@ -67,41 +65,66 @@ module.exports = (client, commandOptions) => {
     validatePermissions(permissions);
   }
 
+  for(const command of commands){
+    allCommands[command] = {
+      ...commandOptions,
+      commands,
+      permissions
+    }
+  }
+};
+
+module.exports.listen = (client)=>{
   client.on("message", (message) => {
     const { member, content, guild } = message;
+    const arguments = content.split(/[ ]+/)
+    const name = arguments.shift().toLowerCase()
 
-    for (const alias of commands) {
-      if (content.toLowerCase().startsWith(`${prefix}${alias.toLowerCase()}`)) {
-
-        for(const permission of permissions){
-            if(!member.hasPermission(permission)){
-                message.reply(permissionError)
-                return
-            }
-        }
-
-        for(const requiredRole of requiredRoles){
-            const role = guild.roles.cache.find(role=>role.name === requiredRole)
-
-            if(!role || member.roles.cache.has(role.id)){
-                message.reply(`You must have \`${requiredRole}\` to use this command`)
-                return
-            }
-        }
-
-        const arguments = content.split(/[ ]+/)
-
-        arguments.shift()
-
-        if(arguments.length<minArgs|| (maxArgs !== null && arguments.length > maxArgs )){
-            message.reply(`Incorrect syntax! Use \`${prefix}${alias} ${expectedArgs}\` `)
-            return
-        }
-
-        callback(message,arguments,arguments.join(' '))
+    if(name.startsWith(prefix)){
+      const command = allCommands[name.replace(prefix,'')]
+      if(!command){
         return
       }
+      
+      const 
+      {
+        permissions,
+        permissionError="`You do not have permission to run this command`",
+        requiredRoles=[],
+        minArgs = 0,
+        maxArgs = null,
+        expectedArgs,
+        callback
+      } = command
 
+    for(const permission of permissions){
+      if(!member.hasPermission(permission)){
+          message.reply(permissionError)
+          return
+      }
+  }
+
+  for(const requiredRole of requiredRoles){
+      const role = guild.roles.cache.find(role=>role.name === requiredRole)
+
+      if(!role || member.roles.cache.has(role.id)){
+          message.reply(`You must have \`${requiredRole}\` to use this command`)
+          return
+      }
+  }
+
+
+
+  if(arguments.length<minArgs|| (maxArgs !== null && arguments.length > maxArgs )){
+      message.reply(`Incorrect syntax! Use \`${prefix}${alias} ${expectedArgs}\` `)
+      return
+  }
+
+  callback(message,arguments,arguments.join(' '))
     }
+
+    
+
+  
   });
-};
+}
