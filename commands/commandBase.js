@@ -120,7 +120,7 @@ module.exports.listen = (client)=>{
       return
   }
 
-  callback(message,arguments,arguments.join(' '))
+  callback(message,arguments,client)
     }
 
     
