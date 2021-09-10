@@ -7,11 +7,13 @@ const client = new Discord.Client({
 const config = require("./config.json");
 
 const inviteNotifications = require("./inviteNotification");
-
+const scaleChannel = require('./scaleChannel')
 client.on("ready", async () => {
   console.log("BOT READY!");
   const baseFile = "commandBase.js";
   const commandBase = require(`./commands/${baseFile}`);
+  
+  scaleChannel(client)
 
   inviteNotifications(client);
   // const match = /^```(\S*)\n?([^]*)\n?```$/.exec(message.content)
