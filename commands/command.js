@@ -1,5 +1,7 @@
 module.exports = {
     commands: ['whois', 'userinfo', 'about'],
+    description:'Shows userinfo of a mentioned user',
+    
     callback: async (message, args, client) => {
         console.log(args)
         const member = message.mentions.members.first() || message.guild.member(args[0])  ,

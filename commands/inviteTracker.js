@@ -1,5 +1,6 @@
 module.exports = {
   commands: "invites",
+  description:'Tracks invites of a server',
   callback: (message) => {
     const { guild } = message;
     guild.fetchInvites().then((invites) => {

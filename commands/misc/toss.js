@@ -1,6 +1,7 @@
 module.exports = {
   commands: ["toss", "flip", "coinflip"],
   minArgs: 0,
+  description:'Emulates a coin toss',
   callback: (message, client) => {
     message.channel
       .send({

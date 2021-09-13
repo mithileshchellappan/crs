@@ -22,6 +22,7 @@ module.exports = {
     commands:['ticket','support'],
     minArgs:1,
     expectedArgs: '<message>',
+    description:'Creates a user ticket',
     callback:async (userMessage,arguments,text,client)=>{
         const {guild,member} = userMessage
         const channel = await client.channels.cache.get(channelId)
