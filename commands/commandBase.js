@@ -1,4 +1,8 @@
+const mongo = require('../mongo')
+const commandPrefixSchema = require('../schemas/command-prefix-schema')
 const { prefix } = require('../config.json')
+const guildPrefixes = {}
+
 
 const validatePermissions = (permissions) => {
   const validPermissions = [
@@ -68,9 +72,9 @@ module.exports = (client, commandOptions) => {
     validatePermissions(permissions)
   }
 
-  client.on('message', (message) => {
+  client.on('message', async(message) => {
     const { member, content, guild } = message
-
+    const prefix = guildPrefixes[guild.id]
     for (const alias of commands) {
       const command = `${prefix}${alias.toLowerCase()}`
 
@@ -117,6 +121,27 @@ module.exports = (client, commandOptions) => {
 
         return
       }
+    }
+  })
+}
+
+module.exports.updateCache = (guildId,newPrefix)=>{
+  guildPrefixes[guildId] = newPrefix
+}
+
+module.exports.loadPrefixes = async client =>{
+  await mongo().then(async mongoose=>{
+    try{
+      for (const guild of client.guilds.cache){
+        const guildId = guild[1].id
+        const result = await commandPrefixSchema.findOne({_id:guildId})
+        guildPrefixes[guildId]=result?.prefix||prefix
+        console.log(guild[1].name)
+      }
+
+      console.log(guildPrefixes)
+    }finally{
+      mongoose.connection.close()
     }
   })
 }
