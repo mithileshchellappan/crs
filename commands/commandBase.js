@@ -129,6 +129,11 @@ module.exports.updateCache = (guildId,newPrefix)=>{
   guildPrefixes[guildId] = newPrefix
 }
 
+module.exports.getPrefix = (guildId)=>{
+  console.log(guildPrefixes[guildId])
+  return guildPrefixes[guildId]
+}
+
 module.exports.loadPrefixes = async client =>{
   await mongo().then(async mongoose=>{
     try{
