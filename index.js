@@ -7,13 +7,12 @@ const config = require("./config.json");
 
 const loadCommands = require('./commands/load-commands')
 
-const advancePolls = require('./advancePolls')
-
+const levels = require('./levels')
 client.on("ready", async () => {
   console.log("BOT READY!");
 
   loadCommands(client);
-  advancePolls(client)
+  levels(client)
 });
 
 client.login(config.token);
