@@ -1,15 +1,11 @@
 const mongo = require("./mongo");
 const profileSchema = require("./schemas/profile-schema");
 
-const coinsCache = {}
-
-
+const coinsCache = {};
 
 module.exports = (client) => {};
 
 module.exports.addCoins = async (guildId, userId, coins) => {
-
-
   return await mongo().then(async (mongoose) => {
     try {
       console.log("find one and update");
@@ -30,7 +26,7 @@ module.exports.addCoins = async (guildId, userId, coins) => {
           new: true
         }
       );
-        coinsCache[`${guildId}-${userId}`] = result.coins
+      coinsCache[`${guildId}-${userId}`] = result.coins;
       return result.coins;
     } finally {
       mongoose.connection.close();
@@ -39,9 +35,8 @@ module.exports.addCoins = async (guildId, userId, coins) => {
 };
 
 module.exports.getCoins = async (guildId, userId) => {
-
-    const cachedValue = coinsCache[`${guildId}-${userId}`]
-    if(cachedValue) return cachedValue
+  const cachedValue = coinsCache[`${guildId}-${userId}`];
+  if (cachedValue) return cachedValue;
 
   return await mongo().then(async (mongoose) => {
     try {
@@ -66,7 +61,7 @@ module.exports.getCoins = async (guildId, userId) => {
         }).save();
       }
 
-      coinsCache[`${guildId}-${userId}`] = coins
+      coinsCache[`${guildId}-${userId}`] = coins;
       return coins;
     } finally {
       mongoose.connection.close();
