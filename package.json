@@ -19,6 +19,7 @@
     "discord.js": "^12.5.3",
     "ffmpeg": "^0.0.4",
     "ffmpeg-static": "^4.4.0",
+    "filestack-js": "^3.24.1",
     "fluent-ffmpeg": "^2.1.2",
     "mongoose": "^6.0.5",
     "node": "16.6.1",

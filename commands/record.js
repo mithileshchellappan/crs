@@ -1,12 +1,34 @@
 const fs = require('fs')
-var wavConverter = require('wav-converter')
 var path = require('path')
 const {prefix} = require('../config.json')
 const {getPrefix} = require('./commandBase')
+
+let chunkPath; 
+
 const createNewChunk = () => {
-    const pathToFile = __dirname + `/../recordings/${Date.now()}.pcm`;
+    const pathToFile = `${chunkPath}/${Date.now()}.pcm`;
     return fs.createWriteStream(pathToFile);
 };
+
+const createNewGuildDirectory = (message)=>{
+    const guildId = message.guild.id
+    const dirPath = __dirname + `/../recordings/${guildId}`
+    if(!fs.existsSync(dirPath)){
+        fs.mkdirSync(dirPath)
+        chunkPath = dirPath
+    }else{
+        fs.readdir(dirPath,(err,files)=>{
+            if(err) throw err
+
+            for(const file of files){
+                fs.unlink(path.join(dirPath,file),err=>{if(err)throw err})
+            }
+        })
+        chunkPath = dirPath
+    }
+
+
+}
 
 module.exports = {
     commands:['record','rec','recvc'],
@@ -18,7 +40,7 @@ module.exports = {
     callback:async (msg,arguments,text,client)=>{
         let title = 'Status: Starting to record'
         const description=`To stop recording send \`${getPrefix(msg.guild.id)}record stop\``
-        let botEmbed = {embed:{title:title,}}
+        let botReply;
         const vc = msg.member.voice.channel
         const botvc = msg.guild.me.voice.channel
         if(!vc) 
@@ -40,12 +62,12 @@ module.exports = {
     console.log(`Sliding into ${voiceChannel.name} ...`);
     voiceChannel.join()
         .then(async conn => {
-            const botReply  = await msg.channel.send({embed:{title:'Status:Starting to record',description,color:'GREEN'}}) 
+            botReply  = await msg.channel.send({embed:{title:'Status:Starting to record',description,color:'RED'}}) 
             const dispatcher = conn.play(__dirname + '/../disclaimer.mp3');
             dispatcher.on('finish', () => { console.log(`Joined ${voiceChannel.name}!\n\nREADY TO RECORD\n`); });
-            title='Status:RECORDING'
             botReply.edit({embed:{title:'Status:RECORDING',description,color:'GREEN'}})
             const receiver = conn.receiver;
+            createNewGuildDirectory(msg)
             conn.on('speaking', (user, speaking) => {
                 if (speaking) {
                     console.log(`${user.username} started speaking`);
@@ -61,24 +83,18 @@ module.exports = {
 
         if(arguments[0] == 'stop'){
             if(msg.guild.voiceStates.cache.filter(a => a.connection !== null).size !== 1)
-        return;
+        {return;}
     
-    const { channel: voiceChannel, connection: conn } = msg.guild.voiceStates.cache.last();
-    const dispatcher = conn.play(__dirname + "/../badumtss.mp3", { volume: 0.45 });
-    dispatcher.on("finish", () => {
+        const { channel: voiceChannel} = msg.guild.voiceStates.cache.last();
+        let botFinishReply = await msg.channel.send({embed:{title:'Finished Recording',description:'File has been recorded',color:'GREEN'}})
         voiceChannel.leave();
         console.log(`\nSTOPPED RECORDING\n`);
-    });
-            // vc.leave()
+        const merge = require('../audioConfig')
+        merge.merge(msg.guild.id)
 
-            // var pcmData = fs.readFileSync(path.resolve('./',fileName+'.pcm'))
-            // var wavData = wavConverter.encodeWav(pcmData,{
-            //     numChannels:2,
-            //     sampleRate:44100,
-            //     byteRate:32
+        
+        
 
-            // })
-            // fs.writeFileSync(path.resolve('./',fileName+'.wav'),wavData)
         }
 
        
