@@ -1,10 +1,17 @@
 module.exports = {
     commands:'ping',
-    expectedArgs:'<num1> <num2>',
     minArgs:0,
     maxArgs:0,
     description:'Server active test',
-    callback:(message,arguments,text)=>{
-        message.reply('pong')
+    callback:(message,arguments,text,client)=>{
+        message.reply('Calculating..').then(resultMess =>{
+            const ping = resultMess.createdTimestamp - message.createdTimestamp
+            resultMess.edit('',{
+                embed:{
+                    description:`Ping:\`${ping}ms\` \n API Latency: \`${client.ws.ping}ms\``,
+                    color:'RED'
+                }
+            })
+        })
     },
 }
