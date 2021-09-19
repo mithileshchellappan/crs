@@ -1,8 +1,9 @@
 {
     "token": "ODgzMzg5MzgyNzEzODI3Mzc4.YTJOeQ.UljuOqbKzUKObKJtaMfon19MeIw",
     "prefix": "!",
-    "mongoPath":"mongodb://localhost:27017/crs",
-    "redisPath":"//redis-15054.c264.ap-south-1-1.ec2.cloud.redislabs.com:15054?password=8hstwCH15gN9lp77Xju6CCH6EAjNHV6g",
-    "filestackAPI":"AKubWA3dOQsSloduHAefjz"
+    "mongoPath": "mongodb://localhost:27017/crs",
+    "redisPath": "//redis-15054.c264.ap-south-1-1.ec2.cloud.redislabs.com:15054?password=8hstwCH15gN9lp77Xju6CCH6EAjNHV6g",
+    "filestackAPI": "AKubWA3dOQsSloduHAefjz",
+    "cloudMongoPath": "mongodb+srv://notagodzilla:8608684820@cluster0.58uh6.mongodb.net/crs?retryWrites=true&w=majority"
 
 }

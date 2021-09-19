@@ -1,10 +1,12 @@
 const mongo = require("./mongo");
 const profileSchema = require("./schemas/profile-schema");
+const {botId} = require('./config.json')
 module.exports = (client) => {
   client.on("message", (message) => {
     const { guild, member } = message;
-
-    addXP(guild.id, member.id, 23,message);
+    if (member.id !== botId) {
+      addXP(guild.id, member.id, 23, message);
+    }
   });
 };
 
@@ -40,12 +42,10 @@ const addXP = async (guildId, userId, xpToAdd, message) => {
 
         message.reply(`You are now level ${level} with ${xp} xp.`);
 
-        await profileSchema.updateOne({guildId,userId},{level,xp})
+        await profileSchema.updateOne({ guildId, userId }, { level, xp });
       }
-
-
     } finally {
-      mongoose.connection.close();
+      // mongoose.connection.close();
     }
   });
 };

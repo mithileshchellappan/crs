@@ -146,7 +146,7 @@ module.exports.loadPrefixes = async client =>{
 
       console.log(guildPrefixes)
     }finally{
-      mongoose.connection.close()
+      // mongoose.connection.close()
     }
   })
 }
