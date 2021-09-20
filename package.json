@@ -16,6 +16,8 @@
     "@ffmpeg/ffmpeg": "^0.10.1",
     "audiobuffer-to-wav": "^1.0.0",
     "child_process": "^1.0.2",
+    "colors": "^1.4.0",
+    "commando-provider-mongo": "^2.1.0",
     "discord.js": "^12.5.3",
     "discord.js-commando": "github:discordjs/Commando",
     "ffmpeg": "^0.0.4",
@@ -34,12 +36,11 @@
     "xhr": "^2.6.0",
     "ytdl-core": "^4.9.1"
   },
-  "_moduleAliases":{
-    "@root":".",
-    "@schemas":"./schemas",
-    "@util":"./util",
-    "@features":"./features/features",
-    "@commands":"./commands/commands"
-
+  "_moduleAliases": {
+    "@root": ".",
+    "@schemas": "./schemas",
+    "@util": "./util",
+    "@features": "./features/features",
+    "@commands": "./commands/commands"
   }
 }
