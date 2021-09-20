@@ -1,6 +1,6 @@
 const mongo = require('../../mongo.js');
 const warnSchema = require('../../schemas/warn-schema.js');
-
+const punishmentLogSchema = require('../../schemas/punishLog-schema')
 module.exports = {
     commands:'warn',
     minArgs:2,
@@ -32,6 +32,13 @@ module.exports = {
                 },{
                     upsert:true
                 })
+
+                await new punishmentLogSchema({
+                    guildId,
+                    userId,
+                    command:message.content,
+                }).save()
+
                 console.log('updated')
             }finally{
             }
