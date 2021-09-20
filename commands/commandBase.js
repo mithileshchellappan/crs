@@ -1,5 +1,5 @@
 const mongo = require('../mongo')
-const commandPrefixSchema = require('../schemas/command-prefix-schema')
+const commandPrefixSchema = require('../schemas/commandPrefix-schema')
 const { prefix } = require('../config.json')
 const guildPrefixes = {}
 
@@ -56,6 +56,7 @@ module.exports = (client, commandOptions) => {
     minArgs = 0,
     maxArgs = null,
     cooldown=-1,
+    requiredChannel = '',
     permissions = [],
     requiredRoles = [],
     callback,
@@ -85,7 +86,9 @@ module.exports = (client, commandOptions) => {
         content.toLowerCase().startsWith(`${command} `) ||
         content.toLowerCase() === command
       ) {
-
+        if(requiredChannel){
+          if(message.channel.name!==requiredChannel) return
+        }
         for (const permission of permissions) {
           if (!member.hasPermission(permission)) {
             message.reply(permissionError)
