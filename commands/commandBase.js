@@ -1,6 +1,6 @@
-const mongo = require('../mongo')
-const commandPrefixSchema = require('../schemas/commandPrefix-schema')
-const { prefix } = require('../config.json')
+const mongo = require('@util/mongo')
+const commandPrefixSchema = require('@schemas/commandPrefix-schema')
+const { prefix } = require('@root/config.json')
 const guildPrefixes = {}
 
 

@@ -1,7 +1,7 @@
 const fs = require('fs')
 var path = require('path')
-const {prefix} = require('../config.json')
-const {getPrefix} = require('./commandBase')
+const {prefix} = require('@root/config.json')
+const {getPrefix} = require('@root/commands/commandBase')
 
 let chunkPath; 
 
@@ -89,7 +89,7 @@ module.exports = {
         let botFinishReply = await msg.channel.send({embed:{title:'Finished Recording',description:'File has been recorded',color:'GREEN'}})
         voiceChannel.leave();
         console.log(`\nSTOPPED RECORDING\n`);
-        const merge = require('../audioConfig')
+        const merge = require('../../features/features/audioConfig')
         merge.merge(msg.guild.id)
 
         

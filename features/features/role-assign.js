@@ -1,6 +1,7 @@
-const firstMessage = require("./first-message");
+const firstMessage = require("@util/first-message");
 
 module.exports = (client) => {
+  return
   const channelId = "883407850951540836";
 
   const getEmoji = (emojiName) =>

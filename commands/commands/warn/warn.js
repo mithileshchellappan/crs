@@ -1,6 +1,6 @@
-const mongo = require('../../mongo.js');
-const warnSchema = require('../../schemas/warn-schema.js');
-const punishmentLogSchema = require('../../schemas/punishLog-schema')
+const mongo = require('@util/mongo.js');
+const warnSchema = require('@schemas/warn-schema.js');
+const punishmentLogSchema = require('@schemas/punishLog-schema')
 module.exports = {
     commands:'warn',
     minArgs:2,

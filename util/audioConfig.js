@@ -3,7 +3,7 @@ var fs = require("fs"),
   currentfile;
 var wavConverter = require("wav-converter");
 var path = require("path");
-const {filestackAPI} = require('./config.json')
+const {filestackAPI} = require('@root/config.json')
 const client = require('filestack-js').init(filestackAPI)
 
 module.exports.merge = (guildId) => {

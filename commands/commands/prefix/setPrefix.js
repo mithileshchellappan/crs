@@ -1,6 +1,6 @@
-const mongo = require('../../mongo')
-const commandPrefixSchema = require('../../schemas/commandPrefix-schema')
-const {updateCache} = require('../commandBase')
+const mongo = require('@util/mongo')
+const commandPrefixSchema = require('@schemas/commandPrefix-schema')
+const {updateCache} = require('@root/commands/commandBase')
 module.exports = {
     commands:'setprefix',
     minArgs:1,

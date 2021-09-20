@@ -1,5 +1,5 @@
-const redis = require("./redis");
-const command = require("./commands");
+const redis = require("@util/redis");
+const command = require("@util/commands");
 
 module.exports = (client) => {
   const redisKeyPrefix = "muted-";

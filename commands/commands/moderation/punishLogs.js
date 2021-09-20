@@ -1,5 +1,5 @@
-const mongo = require('../../mongo')
-const punishmentLogSchema = require('../../schemas/punishLog-schema')
+const mongo = require('@util/mongo')
+const punishmentLogSchema = require('@schemas/punishLog-schema')
 
 module.exports = {
     commands:['punishlogs'],

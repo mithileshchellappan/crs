@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const {mongoPath} = require('./config.json')
+const {mongoPath} = require('@root/config.json')
 
 // const {cloudMongoPath : mongoPath} = require('./config.json')
 

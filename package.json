@@ -22,6 +22,7 @@
     "ffmpeg-static": "^4.4.0",
     "filestack-js": "^3.24.1",
     "fluent-ffmpeg": "^2.1.2",
+    "module-alias": "^2.2.2",
     "mongoose": "^6.0.5",
     "node": "16.6.1",
     "opusscript": "^0.0.8",
@@ -32,5 +33,13 @@
     "wav-converter": "^1.0.0",
     "xhr": "^2.6.0",
     "ytdl-core": "^4.9.1"
+  },
+  "_moduleAliases":{
+    "@root":".",
+    "@schemas":"./schemas",
+    "@util":"./util",
+    "@features":"./features/features",
+    "@commands":"./commands/commands"
+
   }
 }
