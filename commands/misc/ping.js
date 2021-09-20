@@ -2,6 +2,7 @@ module.exports = {
     commands:'ping',
     minArgs:0,
     maxArgs:0,
+    cooldown:10,
     description:'Server active test',
     callback:(message,arguments,text,client)=>{
         message.reply('Calculating..').then(resultMess =>{

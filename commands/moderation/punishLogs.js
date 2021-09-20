@@ -6,6 +6,7 @@ module.exports = {
     minArgs:1,
     maxArgs:1,
     expectedArgs:"<Target user's @>",
+    cooldown:10,
     permission:'ADMINISTRATORS',
     callback:async(message,arguments)=>{
         const target = message.mentions.users.first()

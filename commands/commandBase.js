@@ -46,6 +46,8 @@ const validatePermissions = (permissions) => {
   }
 }
 
+let recentCommands = []
+
 module.exports = (client, commandOptions) => {
   let {
     commands,
@@ -53,6 +55,7 @@ module.exports = (client, commandOptions) => {
     permissionError = 'You do not have permission to run this command.',
     minArgs = 0,
     maxArgs = null,
+    cooldown=-1,
     permissions = [],
     requiredRoles = [],
     callback,
@@ -92,7 +95,7 @@ module.exports = (client, commandOptions) => {
 
         for (const requiredRole of requiredRoles) {
           const role = guild.roles.cache.find(
-            (role) => role.name === requiredRole
+            (roler) => roler.name === requiredRole
           )
 
           if (!role || !member.roles.cache.has(role.id)) {
@@ -101,6 +104,10 @@ module.exports = (client, commandOptions) => {
             )
             return
           }
+        }
+        let cooldownString = `${guild.id}-${member.id}-${commands[0]}`
+        if(cooldown>0 && recentCommands.includes(cooldownString)){
+          return message.reply(`Wait \`${cooldown}s\` to run this command`)
         }
 
         const arguments = content.split(/[ ]+/)
@@ -115,6 +122,18 @@ module.exports = (client, commandOptions) => {
             `Incorrect syntax! Use \`${prefix}${alias} ${expectedArgs}\``
           )
           return
+        }
+
+        recentCommands.push(cooldownString)
+
+        if(cooldown>0){
+          setTimeout(()=>{
+
+            recentCommands = recentCommands.filter((strin)=>{
+              return strin !==cooldownString
+            })
+
+          },cooldown*1000)
         }
 
         callback(message, arguments, arguments.join(' '), client)
@@ -141,7 +160,6 @@ module.exports.loadPrefixes = async client =>{
         const guildId = guild[1].id
         const result = await commandPrefixSchema.findOne({_id:guildId})
         guildPrefixes[guildId]=result?.prefix||prefix
-        console.log(guild[1].name)
       }
 
       console.log(guildPrefixes)
