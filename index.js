@@ -8,7 +8,7 @@ const Discord = require("discord.js");
 const Commando = require("discord.js-commando");
 const path = require("path");
 const { MongoClient } = require("mongodb");
-const MongoDBProvider = require("commando-provider-mongo");
+const MongoDBProvider = require("commando-provider-mongo").MongoDBProvider;
 
 const config = require("@root/config.json");
 const loadCommands = require("@root/commands/load-commands");
@@ -21,11 +21,11 @@ const client = new Commando.CommandoClient({
   ws: { properties: { $browser: "Discord Android" } }
 });
 
-// client.setProvider(
-//   MongoClient.connect(config.mongoPath)
-//     .then((client) => {return new MongoDBProvider(client, "crs")})
-//     .catch((err) => console.log(err))
-// );
+client.setProvider(
+  MongoClient.connect(config.mongoPath)
+    .then((client) => {return new MongoDBProvider(client, "crs")})
+    .catch((err) => console.log(err))
+);
 
 client.on("ready", async () => {
   console.log("BOT READY!".green.bgRed);
