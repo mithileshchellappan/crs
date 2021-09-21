@@ -37,7 +37,8 @@ client.on("ready", async () => {
       ["misc", "Misc Commands"],
       ["moderation", "Moderation Commands"],
       ["economy", "Commands for economy"],
-      ['giveaway','Manages giveaways']
+      ['giveaway','Manages giveaways'],
+      ['games','games gives fun']
     ])
     .registerDefaults()
     .registerCommandsIn(path.join(__dirname, "cmds"));
