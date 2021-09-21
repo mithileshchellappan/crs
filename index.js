@@ -23,7 +23,9 @@ const client = new Commando.CommandoClient({
 
 client.setProvider(
   MongoClient.connect(config.mongoPath)
-    .then((client) => {return new MongoDBProvider(client, "crs")})
+    .then((client) => {
+      return new MongoDBProvider(client, "crs");
+    })
     .catch((err) => console.log(err))
 );
 
@@ -34,7 +36,8 @@ client.on("ready", async () => {
     .registerGroups([
       ["misc", "Misc Commands"],
       ["moderation", "Moderation Commands"],
-      ['economy','Commands for economy']
+      ["economy", "Commands for economy"],
+      ['giveaway','Manages giveaways']
     ])
     .registerDefaults()
     .registerCommandsIn(path.join(__dirname, "cmds"));
