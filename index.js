@@ -33,7 +33,8 @@ client.on("ready", async () => {
   client.registry
     .registerGroups([
       ["misc", "Misc Commands"],
-      ["moderation", "Moderation Commands"]
+      ["moderation", "Moderation Commands"],
+      ['economy','Commands for economy']
     ])
     .registerDefaults()
     .registerCommandsIn(path.join(__dirname, "cmds"));
