@@ -74,11 +74,11 @@ const gameLoop = () => {
 
   setTimeout(gameLoop, 1000);
 };
+
 var shuffled = words.sort(function () {
   return 0.5 - Math.random();
 });
 const mainWords = shuffled.slice(0, 5);
-
 module.exports = class FastTypeGame extends Commando.Command {
   constructor(client) {
     super(client, {
