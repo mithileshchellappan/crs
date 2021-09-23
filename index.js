@@ -41,6 +41,7 @@ client.on("ready", async () => {
       ['giveaway','Manages giveaways'],
       ['games','games gives fun'],
       ['discordapplications','Enables YouTube together'],
+      ['music','Music']
 
     ])
     .registerDefaults()
