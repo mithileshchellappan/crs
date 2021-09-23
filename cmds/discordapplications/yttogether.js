@@ -46,6 +46,7 @@ module.exports = class YoutubeTogether extends Commando.Command {
     client.on("messageReactionAdd", (reaction, user, message) => {
       if (user.bot) return;
       if (currentApp) return;
+      if(!user.voice) return
       const txtChannel = reaction.message.channel;
       currentApp = apps[reaction.emoji.name];
       fetch(`https://discord.com/api/v8/channels/${channel.id}/invites`, {
