@@ -31,11 +31,11 @@ module.exports = class PlayCommand extends Commando.Command {
       return message.channel.send("You need to be in a **VC** to use this");
 
     const server_queue = queue.get(message.guild.id);
-    if(!args.length&&server_queue){
-      console.log(server_queue.connection)
-      server_queue.connection.dispatcher.resume()
-      message.react('👌')
-      return
+    if (!args.length && server_queue) {
+      console.log(server_queue.connection);
+      server_queue.connection.dispatcher.resume();
+      message.react("👌");
+      return;
     }
     if (!args.length)
       return message.channel.send("Please provide song or link");
@@ -48,7 +48,9 @@ module.exports = class PlayCommand extends Commando.Command {
         author: songInfo.videoDetails.author,
         url: songInfo.videoDetails.video_url,
         duration: songInfo.videoDetails.duration,
-        requestedby: message.member.id
+        requestedby: message.member.id,
+        loop:false
+
       };
     } else {
       const video = await videoFinder(args);
@@ -58,7 +60,8 @@ module.exports = class PlayCommand extends Commando.Command {
           url: video.url,
           author: video.author,
           duration: video.duration,
-          requestedby: message.member.id
+          requestedby: message.member.id,
+          loop:false
         };
       } else {
         return message.channel.send("Error finding video");
@@ -72,13 +75,16 @@ module.exports = class PlayCommand extends Commando.Command {
         connection: null,
         songs: [],
         announce: true,
-        songIndex:0,
-        songsCopy:[]
+        songIndex: 0,
+        songsCopy: [],
+        shuffle: false,
+        queueId: null,
+        loop:false
       };
 
       queue.set(message.guild.id, queue_constructor);
       queue_constructor.songs.push(song);
-      queue_constructor.songsCopy.push(song)
+      queue_constructor.songsCopy.push(song);
 
       try {
         const connection = await vc.join();
@@ -86,7 +92,7 @@ module.exports = class PlayCommand extends Commando.Command {
         audio_player(
           message.guild,
           queue_constructor.songs[0],
-          server_queue,
+          queue_constructor,
           this.client
         );
       } catch (e) {
@@ -96,7 +102,7 @@ module.exports = class PlayCommand extends Commando.Command {
       }
     } else {
       server_queue.songs.push(song);
-      server_queue.songsCopy.push(song)
+      server_queue.songsCopy.push(song);
       message.channel.send({
         embed: {
           title: `Track Queued - Position:${

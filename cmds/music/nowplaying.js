@@ -17,7 +17,7 @@ module.exports = class NowPlayingCommand extends Commando.Command {
         embed: { color: "RED", description: "No song is currently playing" }
       });
 
-    const song = server_queue.songs[0];
+    const song = server_queue.songs[server_queue.songIndex];
 
     message.channel.send({
       embed: {
