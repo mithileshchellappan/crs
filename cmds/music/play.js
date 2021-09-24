@@ -32,7 +32,6 @@ module.exports = class PlayCommand extends Commando.Command {
 
     const server_queue = queue.get(message.guild.id);
     if (!args.length && server_queue) {
-      console.log(server_queue.connection);
       server_queue.connection.dispatcher.resume();
       message.react("👌");
       return;

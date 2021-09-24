@@ -6,12 +6,13 @@ const getStream = (url) => {
 const audio_player = async (guild, song, server_queue, client) => {
   const songQueue = server_queue;
 
-  console.log(songQueue)
-
   const guildMember = guild.members.cache.get(client.user.id);
   if (!song) {
-    guildMember.setNickname("");
-    return client.queue.delete(guild.id);
+    if (!songQueue.loop||!songQueue.songs[0].loop) {
+      console.log("inside exit if");
+      guildMember.setNickname("");
+      return client.queue.delete(guild.id);
+    }
   }
 
   guildMember.setNickname(
@@ -20,19 +21,22 @@ const audio_player = async (guild, song, server_queue, client) => {
 
   const stream = getStream(song.url);
   songQueue.connection.play(stream, { seek: 0, volume: 1 }).on("finish", () => {
-    console.log(songQueue.songs);
-
     if (song.loop) {
+      console.log('inside song if')
       songQueue.songs[0].loop = true;
-
+      
       audio_player(guild, song, server_queue, client);
       return;
     } else if (songQueue.loop) {
-      songQueue.songs = songQueue.songsCopy;
+      if(songQueue.songs.length===songQueue.songIndex){
+        console.log('inside main if')
+        songQueue.songs = songQueue.songsCopy
+      }
+      console.log("inside else if");
       audio_player(guild, songQueue.songs[0], songQueue, client);
+      return
     }
     songQueue.songIndex += 1;
-
     audio_player(
       guild,
       songQueue.songs[songQueue.songIndex],
