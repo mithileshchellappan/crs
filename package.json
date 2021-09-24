@@ -37,7 +37,8 @@
     "wav-converter": "^1.0.0",
     "xhr": "^2.6.0",
     "yt-search": "^2.10.1",
-    "ytdl-core": "^4.9.1"
+    "ytdl-core": "^4.9.1",
+    "ytpl": "^2.2.3"
   },
   "_moduleAliases": {
     "@root": ".",
