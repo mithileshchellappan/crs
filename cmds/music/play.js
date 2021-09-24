@@ -2,7 +2,7 @@ const Commando = require("discord.js-commando");
 const fetch = require("node-fetch");
 const ytdl = require("ytdl-core");
 const ytSearch = require("yt-search");
-const video_player = require("@util/audioPlayerUtils/audioPlayer");
+const audio_player = require("@util/audioPlayerUtils/audioPlayer");
 const queue = new Map();
 
 const videoFinder = async (query) => {
@@ -71,16 +71,19 @@ module.exports = class PlayCommand extends Commando.Command {
         textChannel: message.channel,
         connection: null,
         songs: [],
-        announce: true
+        announce: true,
+        songIndex:0,
+        songsCopy:[]
       };
 
       queue.set(message.guild.id, queue_constructor);
       queue_constructor.songs.push(song);
+      queue_constructor.songsCopy.push(song)
 
       try {
         const connection = await vc.join();
         queue_constructor.connection = connection;
-        video_player(
+        audio_player(
           message.guild,
           queue_constructor.songs[0],
           server_queue,
@@ -93,6 +96,7 @@ module.exports = class PlayCommand extends Commando.Command {
       }
     } else {
       server_queue.songs.push(song);
+      server_queue.songsCopy.push(song)
       message.channel.send({
         embed: {
           title: `Track Queued - Position:${

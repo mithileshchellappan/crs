@@ -1,4 +1,7 @@
 const ytdl = require("ytdl-core");
+const getStream = (url) => {
+  return ytdl(url, { filter: "audioonly" });
+};
 
 const audio_player = async (guild, song, server_queue, client) => {
   const songQueue = client.queue.get(guild.id);
@@ -6,20 +9,17 @@ const audio_player = async (guild, song, server_queue, client) => {
   const guildMember = guild.members.cache.get(client.user.id);
   if (!song) {
     songQueue.vc.leave();
-    guildMember.setNickname('')
+    guildMember.setNickname("");
     return client.queue.delete(guild.id);
   }
 
-  guildMember.setNickname(song?song.title.substr(0, 30):'');
+  guildMember.setNickname(song ? song.title.substr(0, 30) : "");
 
-  console.log(song.title.substr(0, 30));
-
-  console.log(songQueue.songs[0].duration);
-  const stream = ytdl(song.url, { filter: "audioonly" });
+  const stream = getStream(song.url)
   songQueue.connection.play(stream, { seek: 0, volume: 1 }).on("finish", () => {
-    songQueue.songs.shift();
+    songQueue.songIndex += 1
     console.log(songQueue.songs);
-    audio_player(guild, songQueue.songs[0], server_queue, client);
+    audio_player(guild, songQueue.songs[songQueue.songIndex], server_queue, client);
   });
 
   songQueue.announce &&
@@ -32,3 +32,5 @@ const audio_player = async (guild, song, server_queue, client) => {
 };
 
 module.exports = audio_player;
+
+module.exports.getStream = getStream;
