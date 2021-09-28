@@ -17,7 +17,7 @@ const commandBase = require("@root/commands/commandBase");
 const loadFeatures = require("@root/features/loadFeatures");
 
 const client = new Commando.CommandoClient({
-  owner: "452065156848025631",
+  owner: config.ownerId,
   commandPrefix: config.prefix,
   ws: { properties: { $browser: "Discord Android" } }
 });
