@@ -144,53 +144,57 @@ module.exports = class PlayCommand extends Commando.Command {
     try {
       const join = await vc.join();
       structure.connection = join;
-      play(structure.queue[0]);
+      play(structure.queue[0],message);
     } catch (e) {
       console.log(e);
       deletequeue(message.guild.id);
       return error(`Something went wrong, please try again`);
     }
 
-    async function play(track, client) {
-      try {
-        const data = message.client.queue?.get(message.guild.id);
-        if (!track) {
-          return data.channel.send(`Queue is empty`);
-        }
-        data.connection.on("disconnect", () => deletequeue(message.guild.id));
-
-        const ytdlsource = await ytdl(track.url, {
-          filter: "audioonly",
-          quality: "highestaudio",
-          highWatermark: 1 << 25,
-          opusEncoded: true
-        });
-
-        const guildMember = message.guild.members.cache.get(
-          message.client.user.id
-        );
-        guildMember.setNickname(
-          track ? track.name.replace(/ *\([^)]*\) */g, "").substr(0, 30) : ""
-        );
-        const player = data.connection.play(ytdlsource).on("finish", () => {
-          var removed = data.queue.shift();
-          if (data.loop) {
-            data.queue.push(removed);
-          }
-          play(data.queue[0]);
-        });
-
-        player.setVolumeLogarithmic(data.volume / 100);
-        data.announce&&data.channel.send({
-          embed: {
-            title: `Now playing`,
-            description: track.name,
-            color: "BLUE"
-          }
-        });
-      } catch (e) {
-        console.log(e);
-      }
-    }
+    
   }
 };
+
+async function play(track, message) {
+  try {
+    const data = message.client.queue?.get(message.guild.id);
+    if (!track) {
+      return data.channel.send(`Queue is empty`);
+    }
+    data.connection.on("disconnect", () => message.client.queue.delete(message.guild.id));
+
+    const ytdlsource = await ytdl(track.url, {
+      filter: "audioonly",
+      quality: "highestaudio",
+      highWatermark: 1 << 25,
+      opusEncoded: true
+    });
+
+    const guildMember = message.guild.members.cache.get(
+      message.client.user.id
+    );
+    guildMember.setNickname(
+      track ? track.name.replace(/ *\([^)]*\) */g, "").substr(0, 30) : ""
+    );
+    const player = data.connection.play(ytdlsource).on("finish", () => {
+      var removed = data.queue.shift();
+      if (data.loop) {
+        data.queue.push(removed);
+      }
+      play(data.queue[0],message);
+    });
+
+    player.setVolumeLogarithmic(data.volume / 100);
+    data.announce&&data.channel.send({
+      embed: {
+        title: `Now playing`,
+        description: track.name,
+        color: "BLUE"
+      }
+    });
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+module.exports.play = play

@@ -9,7 +9,7 @@ const Commando = require("discord.js-commando");
 const path = require("path");
 const { MongoClient } = require("mongodb");
 const MongoDBProvider = require("commando-provider-mongo").MongoDBProvider;
-const discordButtons = require("discord-buttons");
+const { DiscordSR } = require('discord-speech-recognition');
 
 const config = require("@root/config.json");
 const loadCommands = require("@root/commands/load-commands");
@@ -21,7 +21,6 @@ const client = new Commando.CommandoClient({
   commandPrefix: config.prefix,
   ws: { properties: { $browser: "Discord Android" } }
 });
-discordButtons(client);
 client.setProvider(
   MongoClient.connect(config.mongoPath)
     .then((client) => {
@@ -29,6 +28,8 @@ client.setProvider(
     })
     .catch((err) => console.log(err))
 );
+
+const discordSR = new DiscordSR(client);
 
 client.on("ready", async () => {
   console.log("BOT READY!".green.bgRed);
@@ -52,7 +53,9 @@ client.on("ready", async () => {
 
   // commandBase.loadPrefixes(client)
   // loadCommands(client);
-  // loadFeatures(client)
+  loadFeatures(client)
 });
+
+
 
 client.login(config.token);
