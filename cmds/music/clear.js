@@ -10,14 +10,32 @@ module.exports = class SkipCommand extends Commando.Command {
     });
   }
 
-  async run(message, args) {
-    const server_queue = this.client.queue.get(message.guild.id);
-
-    if (message.member.voice.channel != message.guild.voice.channel)
-      return message.channel.send("You have to be in the same channel to skip");
-    if (!server_queue) return message.channel.send("There is nothing playing");
-    server_queue.songs = server_queue.songsCopy = [];
-    message.channel.send("The queue is now cleared");
-    message.react("👌");
+  async run(message) {
+    const vc = message.member.voice.channel;
+    const botVc = message.guild.me.voice.channel;
+    if (!vc) {
+      if (botVc)
+        return message.channel.send(
+          `You have to be in <#${botVc.id}> to use this`
+        );
+      if (!botVc)
+        return message.channel.send("You have to be in a **VC** to use this");
+    }
+    let queue = message.client.queue.get(message.guild.id);
+    if (!queue)
+      return message.channel.send({
+          embed:{
+              description:`There are no songs in queue`,
+              color:`BLUE`
+          }
+      })
+    queue.connection.dispatcher.end();
+    queue.queue = [];
+    message.client.queue.delete(message.guild.id)
+    const guildMember = message.guild.members.cache.get(
+        message.client.user.id
+      );
+      guildMember.setNickname("");
+    message.react('👌')
   }
 };

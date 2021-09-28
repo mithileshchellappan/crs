@@ -9,7 +9,7 @@ const Commando = require("discord.js-commando");
 const path = require("path");
 const { MongoClient } = require("mongodb");
 const MongoDBProvider = require("commando-provider-mongo").MongoDBProvider;
-const discordButtons = require('discord-buttons')
+const discordButtons = require("discord-buttons");
 
 const config = require("@root/config.json");
 const loadCommands = require("@root/commands/load-commands");
@@ -21,7 +21,7 @@ const client = new Commando.CommandoClient({
   commandPrefix: config.prefix,
   ws: { properties: { $browser: "Discord Android" } }
 });
-discordButtons(client)
+discordButtons(client);
 client.setProvider(
   MongoClient.connect(config.mongoPath)
     .then((client) => {
@@ -32,20 +32,23 @@ client.setProvider(
 
 client.on("ready", async () => {
   console.log("BOT READY!".green.bgRed);
-  console.log(client.token)
+  console.log(client.token);
   client.registry
     .registerGroups([
       ["misc", "Misc Commands"],
       ["moderation", "Moderation Commands"],
       ["economy", "Commands for economy"],
-      ['giveaway','Manages giveaways'],
-      ['games','games gives fun'],
-      ['discordapplications','Enables YouTube together'],
-      ['music','Music']
-
+      ["giveaway", "Manages giveaways"],
+      ["games", "games gives fun"],
+      ["discordapplications", "Enables YouTube together"],
+      ["music", "Music"]
     ])
+
     .registerDefaults()
-    .registerCommandsIn(path.join(__dirname, "cmds"));
+    .registerCommandsIn({
+      filter: /^([^.].*)\.(js|ts)$/,
+      dirname: path.join(__dirname, "cmds")
+    });
 
   // commandBase.loadPrefixes(client)
   // loadCommands(client);

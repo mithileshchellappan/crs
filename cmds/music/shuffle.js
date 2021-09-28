@@ -12,25 +12,27 @@ module.exports = class QueueCommand extends Commando.Command {
   }
 
   async run(message, args) {
-    const server_queue = this.client.queue.get(message.guild.id);
-    if (!server_queue) return message.channel.send("No songs in queue");
-    if(!server_queue.shuffle){
-        server_queue.shuffle = !server_queue.shuffle
-        server_queue.songs = this.shuffleArray(server_queue.songs)
-        message.channel.send('The queue is now shuffled')
-    }else{
-        server_queue.shuffle = !server_queue.shuffle
-        server_queue.songs = server_queue.songsCopy
-        message.channel.send('The queue is now un-shuffled')
-
+    const vc = message.member.voice.channel;
+    if (!vc)
+      return message.channel.send(
+        "You must Join a voice channel before using this command!"
+      );
+    const queue = message.client.queue.get(message.guild.id);
+    if (!queue)
+      return message.channel.send(
+        {
+            embed:{
+                description:`No queue to shuffle`
+            }
+        }
+      );
+    let songs = queue.queue;
+    for (let i = songs.length - 1; i > 1; i--) {
+      let j = 1 + Math.floor(Math.random() * i);
+      [songs[i], songs[j]] = [songs[j], songs[i]];
     }
-    message.react("👌");
+    queue.queue = songs;
+    message.client.queue.set(message.guild.id, queue);
   }
-  shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array
-  }
+  
 };

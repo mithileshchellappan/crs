@@ -1,111 +1,61 @@
 const Commando = require("discord.js-commando");
-const { MessageEmbed, Message } = require("discord.js");
-const audio_player = require("@util/audioPlayerUtils/audioPlayer");
-
+const { MessageEmbed } = require("discord.js");
+const DiscordPagination = require("discord.js-pagination");
 module.exports = class QueueCommand extends Commando.Command {
   constructor(client) {
     super(client, {
       name: "queue",
       aliases: ["q"],
-      memberName: "queue",
+      autoAliases: true,
       group: "music",
-      description: "Song queue"
+      description: "Queue",
+      memberName: "queue"
     });
   }
 
-  async run(message, args) {
-    const server_queue = this.client.queue.get(message.guild.id);
-    if (!server_queue || server_queue.songs.len===0) return message.channel.send("No songs in queue");
-    
-    let queuedVideos = server_queue.songs;
+  async run(message) {
+    const vc = message.member.voice.channel;
+    if (!vc)
+      return message.channel.send(
+        "You must Join a voice channel before using this command!"
+      );
+    const queue = message.client.queue.get(message.guild.id);
+    const embeds = [];
 
-    const back = "⬅",
-      forward = "➡",
-      numPerPages = 10;
-    let pageContents = [];
-
-    while (queuedVideos.length > 0) {
-      pageContents.push(queuedVideos.splice(0, numPerPages));
-    }
-
-    let numOfPages = pageContents.length;
-    let currentPage = 0;
-    let currentListNum = (currentPage + 1) * numPerPages - numPerPages;
-    const np = server_queue.songsCopy[server_queue.songIndex]?.title;
-    let mainTitle = np ? `Now Playing : ${np}` : "This is the last song";
-    let description = `${pageContents[currentPage]
-      .map(
-        (song, index) =>
-          `**${currentListNum + (index + 1)}:** [${song.title}](${song.url})`
-      )
-      .join("\n")}\n\n`;
-
-    const embed = new MessageEmbed()
-      .setTitle(mainTitle)
-      .setColor("YELLOW")
-      .setDescription(description)
-      .setFooter(`Page:${currentPage + 1} of ${numOfPages}`);
-
-    const msg = await message.channel.send({ embed });
-    if (numOfPages <= 1) return;
-
-    msg.react(back);
-    msg.react(forward);
-
-    const filter = (reaction) =>
-      reaction.emoji.name === back || reaction.emoji.name === forward;
-
-    const collector = msg.createReactionCollector(filter, { time: 60000 });
-
-    try {
-      collector.on("collect", (reaction, user) => {
-        if (user.bot) return;
-
-        queuedVideos = server_queue.songsCopy;
-        pageContents = [];
-
-        while (queuedVideos.length > 0) {
-          pageContents.push(queuedVideos.splice(0, numPerPages));
-        }
-        numOfPages = pageContents.length;
-        console.log(reaction.emoji.name);
-        switch (reaction.emoji.name) {
-          case back: {
-            currentPage =
-              currentPage == 0 ? pageContents.length - 1 : (currentPage -= 1);
-            break;
-          }
-          case forward: {
-            currentPage =
-              currentPage == pageContents.length - 1 ? 0 : (currentPage += 1);
-
-            break;
-          }
-        }
-
-        reaction.users.remove(user);
-
-        currentListNum = (currentPage + 1) * numPerPages - numPerPages;
-        console.log();
-        console.log(currentPage, pageContents[currentPage]);
-        description = `${pageContents[currentPage]
-          .map(
-            (song, index) =>
-              `**${currentListNum + (index + 1)}:** [${song.title}](${
-                song.url
-              })`
-          )
-          .join("\n")}\n\n`;
-        const editEmbed = new MessageEmbed()
-          .setTitle(mainTitle)
-          .setDescription(description)
-          .setFooter(`Page:${currentPage + 1} of ${numOfPages}`);
-
-        msg.edit({ embed: editEmbed });
+    if (!queue) {
+      return message.channel.send({
+        embed: { title: "There is nothing in queue!",color:'BLUE' }
       });
-    } catch (e) {
-      message.channel.send("Something went wrong, please try again");
-      console.log(e);
+    } else if (queue.queue === []) {
+      return message.channel.send({
+        embed: { title: "There is nothing in queue!",volor:'BLUE' }
+      });
+    } else {
+      try{
+        const songs = queue.queue.map(
+          (track, id) =>
+            `**${id + 1}**[${track.name}](${track.url})-requested by :${
+              track.requested
+            }`
+        );
+        let k = 1;
+        console.log(queue.queue.length);
+        for (let i = 0; i < queue.queue.length; i += 20) {
+          let embed = new MessageEmbed()
+            .setColor("BLUE")
+            .setDescription()
+            .setDescription(songs.slice(i, i + 19).join("\n"))
+            .setFooter(`Page ${k}`);
+          embeds.push(embed);
+  
+          k++;
+        }
+  
+        const emojis = ["⏪", "⏩"];
+        DiscordPagination(message, embeds, emojis, 100000);
+      }catch (e){
+        console.log(e)
+      }
     }
   }
 };

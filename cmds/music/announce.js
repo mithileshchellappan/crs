@@ -11,14 +11,23 @@ module.exports = class AnnounceStatus extends Commando.Command {
   }
 
   async run(message) {
-    const server_queue = this.client.queue.get(message.guild.id);
-    if (!server_queue) return message.channel.send("Nothing is playing");
-    server_queue.announce = !server_queue.announce;
+    const vc = message.member.voice.channel;
+    const botVc = message.guild.me.voice.channel;
+    if (!vc) {
+      if (botVc)
+        return message.channel.send(
+          `You have to be in <#${botVc.id}> to use this`
+        );
+      if (!botVc)
+        return message.channel.send("You have to be in a **VC** to use this");
+    }
+    let queue = message.client.queue.get(message.guild.id);
+    queue.announce = !queue.announce;
     message.channel.send({
       embed: {
         color: "BLUE",
         description: `Now playing messages will ${
-          !server_queue.announce ? "not " : ""
+          !queue.announce ? "not " : ""
         }be announced`
       }
     });

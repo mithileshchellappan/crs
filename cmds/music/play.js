@@ -1,39 +1,13 @@
 const Commando = require("discord.js-commando");
-const fetch = require("node-fetch");
 const ytdl = require("ytdl-core");
-const ytSearch = require("yt-search");
+const yt_search = require("yt-search");
+const yt_pl = require("ytpl");
 const ytpl = require("ytpl");
 
-const audio_player = require("@util/audioPlayerUtils/audioPlayer");
 const queue = new Map();
-
-const videoFinder = async (query) => {
-  const result = await ytSearch(query);
-  return result.videos.length > 1 ? result.videos[0] : null;
-};
-
-const connect = async (queue_constructor, vc, message, client) => {
-  try {
-    const connection = await vc.join();
-    queue_constructor.connection = connection;
-    audio_player(
-      message.guild,
-      queue_constructor.songs[0],
-      queue_constructor,
-      client
-    );
-  } catch (e) {
-    queue.delete(message.guild.id);
-    message.channel.send("There was an error connecting");
-    console.log(e);
-  }
-};
-
 module.exports = class PlayCommand extends Commando.Command {
   constructor(client) {
-    client.ping = "ping";
     client.queue = queue;
-
     super(client, {
       name: "play",
       aliases: ["play", "p"],
@@ -45,95 +19,178 @@ module.exports = class PlayCommand extends Commando.Command {
 
   async run(message, args) {
     const vc = message.member.voice.channel;
-    const cmd = message.content.split(" ")[0];
-    if (!vc)
-      return message.channel.send("You need to be in a **VC** to use this");
-
-    const server_queue = queue.get(message.guild.id);
-    if (!args.length && server_queue) {
-      server_queue.connection.dispatcher.resume(true);
-      message.react("👌");
-      return;
+    const botVc = message.guild.me.voice.channel;
+    console.log(args);
+    if (!vc) {
+      if (botVc)
+        return message.channel.send(
+          `You have to be in <#${botVc.id}> to use this`
+        );
+      if (!botVc)
+        return message.channel.send("You have to be in a **VC** to use this");
     }
-    if (!args.length)
-      return message.channel.send("Please provide song or link");
-    let song = {};
-    const queue_constructor = {
-      vc,
-      textChannel: message.channel,
-      connection: null,
-      songs: [],
-      announce: true,
-      songIndex: 0,
-      songsCopy: [],
-      shuffle: false,
-      queueId: null,
-      loop: false
-    };
-    if (ytdl.validateURL(args[0])) {
-      const songInfo = await ytdl.getInfo(args[0]);
+    const setqueue = (id, obj) => this.client.queue.set(id, obj);
+    const deletequeue = (id) => this.client.queue.delete(id);
+    const error = (err) => message.channel.send(err);
 
-      song = {
-        title: songInfo.videoDetails.title,
-        author: songInfo.videoDetails.author,
-        url: songInfo.videoDetails.video_url,
-        duration: songInfo.videoDetails.duration,
-        requestedby: message.member.id,
-        loop: false
-      };
-    } else {
-      const video = await videoFinder(args);
-      if (video) {
-        song = {
-          title: video.title,
-          url: video.url,
-          author: video.author,
-          duration: video.duration,
-          requestedby: message.member.id,
+    var track;
+    if (!args.length)
+      return message.channel.send(`Please provide song name or link`);
+    const structure = {
+      channel: message.channel,
+      vc,
+      volume: 100,
+      playing: true,
+      queue: [],
+      connection: null,
+      announce:true
+    };
+
+    var list = message.client?.queue?.get(message.guild.id);
+
+    if (ytdl.validateURL(args)) {
+      try {
+        const ytdata = await ytdl.getBasicInfo(args);
+        if (!ytdata) return error("No song found for url");
+        track = {
+          name: ytdata.videoDetails.title,
+          requested: message.author,
+          url: ytdata.videoDetails.video_url,
           loop: false
         };
-      } else if (ytpl.getPlaylistID(args)) {
-        const playlistID = await ytpl.getPlaylistID(args);
-        const { items, estimatedItemCount } = await ytpl(playlistID);
-        queue.set(message.guild.id, queue_constructor);
-        items.forEach((item)=>{
-          song = {
-            title: item.title,
-            url: item.url,
-            author: item.author.name,
-            duration: item.duration,
-            requestedby: message.member.id,
+        if (!list) {
+          setqueue(message.guild.id, structure);
+          structure.queue.push(track);
+        } else {
+          list.queue.push(track);
+          return message.channel.send({
+            embed: {
+              description: `Queued ${track.name}`,
+              color: "BLUE"
+            }
+          });
+        }
+      } catch (e) {
+        console.log(e);
+        return error("Something went wrong try again");
+      }
+    } else {
+      try {
+        const searched = await (await yt_search(args)).videos[0];
+        if (!searched) {
+          try {
+            const playlistId = await ytpl.getPlaylistID(args);
+            const { items, estimatedItemCount } = await ytpl(playlistId, {
+              pages: "Infinity"
+            });
+            if (!list) {
+              setqueue(message.guild.id, structure);
+              console.log(items.length);
+              for (let item of items) {
+                track = {
+                  name: item.title,
+                  url: item.url,
+                  requested: message.author,
+                  loop: false
+                };
+                structure.queue.push(track);
+              }
+            } else {
+              items.forEach((item) => {
+                track = {
+                  name: item.title,
+                  url: item.url,
+                  requested: message.author,
+                  loop: false
+                };
+                list.queue.push(track);
+              });
+            }
+            message.channel.send({
+              embed: {
+                description: `Queued ${estimatedItemCount} items`
+              }
+            });
+          } catch (e) {
+            console.log(e);
+            return error(`Something went wrong in loading the playlist`);
+          }
+        } else {
+          track = {
+            name: searched.title,
+            url: searched.url,
+            requested: message.member,
             loop: false
           };
-          queue_constructor.songs.push(song);
-          queue_constructor.songsCopy.push(song);
-        })
-        connect(queue_constructor, vc, message, this.client);
-        return message.channel.send(`Added ${estimatedItemCount} songs`);
-      } else {
-        return message.channel.send("Error finding video");
+
+          if (!list) {
+            setqueue(message.guild.id, structure);
+            structure.queue.push(track);
+          } else {
+            list.queue.push(track);
+            return message.channel.send({
+              embed: {
+                description: `Queued ${track.name}`,
+                color: "BLUE"
+              }
+            });
+          }
+        }
+      } catch (e) {
+        console.log(e);
+        return error(`Error occured. Please try again`);
       }
     }
+    try {
+      const join = await vc.join();
+      structure.connection = join;
+      play(structure.queue[0]);
+    } catch (e) {
+      console.log(e);
+      deletequeue(message.guild.id);
+      return error(`Something went wrong, please try again`);
+    }
 
-    if (!server_queue) {
-      queue.set(message.guild.id, queue_constructor);
-      queue_constructor.songs.push(song);
-      queue_constructor.songsCopy.push(song);
-
-      connect(queue_constructor, vc, message, this.client);
-    } else {
-      server_queue.songs.push(song);
-      server_queue.songsCopy.push(song);
-      message.channel.send({
-        embed: {
-          title: `Track Queued - Position:${
-            server_queue.songs.indexOf(song) + 1
-          }`,
-          description: song.title,
-          color: "BLUE"
+    async function play(track, client) {
+      try {
+        const data = message.client.queue?.get(message.guild.id);
+        if (!track) {
+          return data.channel.send(`Queue is empty`);
         }
-      });
-      return;
+        data.connection.on("disconnect", () => deletequeue(message.guild.id));
+
+        const ytdlsource = await ytdl(track.url, {
+          filter: "audioonly",
+          quality: "highestaudio",
+          highWatermark: 1 << 25,
+          opusEncoded: true
+        });
+
+        const guildMember = message.guild.members.cache.get(
+          message.client.user.id
+        );
+        guildMember.setNickname(
+          track ? track.name.replace(/ *\([^)]*\) */g, "").substr(0, 30) : ""
+        );
+        const player = data.connection.play(ytdlsource).on("finish", () => {
+          var removed = data.queue.shift();
+          if (data.loop) {
+            data.queue.push(removed);
+          }
+          play(data.queue[0]);
+        });
+
+        player.setVolumeLogarithmic(data.volume / 100);
+        data.announce&&data.channel.send({
+          embed: {
+            title: `Now playing`,
+            description: track.name,
+            color: "BLUE"
+          }
+        });
+      } catch (e) {
+        console.log(e);
+      }
     }
   }
 };
