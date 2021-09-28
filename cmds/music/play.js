@@ -43,7 +43,7 @@ module.exports = class PlayCommand extends Commando.Command {
       playing: true,
       queue: [],
       connection: null,
-      announce:true
+      announce:true,
     };
 
     var list = message.client?.queue?.get(message.guild.id);

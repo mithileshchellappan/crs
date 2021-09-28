@@ -1,4 +1,5 @@
 const discordTTS = require("discord-tts");
+const { Message } = require("discord.js");
 const yt_search = require("yt-search");
 const { play } = require("../../cmds/music/play");
 module.exports = async (client) => {
@@ -30,6 +31,16 @@ module.exports = async (client) => {
 
           queue.queue.push(track);
           return;
+        }else if(message.content === "reduce volume"){
+          queue.volume-= 25
+          queue.connection.dispatcher.setVolumeLogarithmic(queue.volume/100)
+        }else if(message.content === "mute"){
+          queue.volume===0?queue.volume=100:queue.volume=0
+          queue.connection.dispatcher.setVolumeLogarithmic(queue.volume/100)
+        }else if(message.content ==="gaming"){
+          queue.volume = 17
+          queue.connection.dispatcher.setVolumeLogarithmic(queue.volume/100)
+          
         }
       }
     } catch (e) {
