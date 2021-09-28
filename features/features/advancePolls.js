@@ -1,6 +1,7 @@
 const channels = ['887216856262406214']
 
 module.exports = client =>{ 
+    return
     client.on('message',message=>{
         const {content} = message
         const eachLine = content.split('\n')

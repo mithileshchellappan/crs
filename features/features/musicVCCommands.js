@@ -1,12 +1,10 @@
 const discordTTS = require("discord-tts");
 const yt_search = require("yt-search");
-const {play} = require('../../cmds/music/play')
+const { play } = require("../../cmds/music/play");
 module.exports = async (client) => {
-  const conn = await vc.join();
   client.on("speech", async (message) => {
-    try {
     let queue = client.queue.get(message.guild.id);
-
+    try {
       console.log(message.content);
       if (message.content) {
         let contents = message.content.split(" ");
@@ -15,10 +13,13 @@ module.exports = async (client) => {
           contents[0] === "skip" ||
           contents[0] === "jump" ||
           contents[0] === "next"
-        )skip(queue);
-        else if(contents[0]==='play'){
-          contents.shift()
-        const searched = await (await yt_search(contents.join(' '))).videos[0];
+        )
+          skip(queue);
+        else if (contents[0] === "play") {
+          contents.shift();
+          const searched = await (
+            await yt_search(contents.join(" "))
+          ).videos[0];
 
           var track = {
             name: searched.title,
@@ -27,11 +28,9 @@ module.exports = async (client) => {
             loop: false
           };
 
-            queue.queue.push(track);
-            return
-          
+          queue.queue.push(track);
+          return;
         }
-          
       }
     } catch (e) {
       console.log(e);
@@ -39,7 +38,6 @@ module.exports = async (client) => {
   });
 
   async function skip(queue) {
-
     if (queue.length === 1) {
       return conn.play(discordTTS.getVoiceStream("Nothing in queue"));
     }

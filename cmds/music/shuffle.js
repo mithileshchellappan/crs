@@ -33,6 +33,7 @@ module.exports = class QueueCommand extends Commando.Command {
     }
     queue.queue = songs;
     message.client.queue.set(message.guild.id, queue);
+    message.react('👌')
   }
   
 };
